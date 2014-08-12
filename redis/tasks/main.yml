@@ -11,15 +11,13 @@
     chdir: /tmp/redis-stable
   sudo: yes
 
-- name: Make base dir
-  file: path=/var/redis
+- name: Make dirs
+  file: path={{ item }}
         state=directory
   sudo: yes
-
-- name: Make config dir
-  file: path=/etc/redis
-        state=directory
-  sudo: yes
+  with_items:
+    - /var/redis
+    - /etc/redis
 
 - name: Copy config
   copy: src=redis.conf

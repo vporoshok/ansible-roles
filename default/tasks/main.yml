@@ -18,12 +18,11 @@
   sudo: yes
 
 - name: Install venv
-  pip: name=virtualenv
+  pip: name={{ item }}
   sudo: yes
-
-- name: Install venv wrapper
-  pip: name=virtualenvwrapper
-  sudo: yes
+  with_items:
+    - virtualenv
+    - virtualenvwrapper
 
 - name: Create user
   user: name={{ user }}
