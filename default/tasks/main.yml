@@ -11,25 +11,44 @@
     - htop
     - iftop
 
+- name: Install pip
+  shell: wget -O - https://bootstrap.pypa.io/get-pip.py | python
+  args:
+    creates: /usr/local/bin/pip
+  sudo: yes
+
+- name: Install venv
+  pip: name=virtualenv
+  sudo: yes
+
+- name: Install venv wrapper
+  pip: name=virtualenvwrapper
+  sudo: yes
+
 - name: Create user
-  user: name={{ user }} shell='/bin/zsh' groups='sudo'
+  user: name={{ user }}
+        shell=/bin/zsh
+        groups=sudo
   sudo: yes
 
 - name: Copy ssh key
-  authorized_key: user={{ user }} key='ssh-rsa id_rsa.pub'
+  authorized_key: user={{ user }}
+                  key='ssh-rsa id_rsa.pub'
   sudo: no
 
 - name: Clone oh-my-zsh
-  git: repo='git://github.com/robbyrussell/oh-my-zsh.git'
-       dest='/home/{{ user }}/.oh-my-zsh'
-       accept_hostkey='yes'
+  git: repo=git://github.com/robbyrussell/oh-my-zsh.git
+       dest=/home/{{ user }}/.oh-my-zsh
+       accept_hostkey=yes
   sudo: no
 
 - name: Copy default rc
-  copy: src='vimrc' dest='/home/{{ user }}/.vimrc' owner={{ user }}
+  copy: src=vimrc
+        dest=/home/{{ user }}/.vimrc
+        owner={{ user }}
   sudo: no
 
 - name: Setup zshrc
-  template: src='zshrc' dest='/home/{{ user }}/.zshrc'
+  template: src=zshrc
+            dest=/home/{{ user }}/.zshrc
   sudo: no
-

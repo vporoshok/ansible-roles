@@ -1,7 +1,7 @@
 - name: Download
   shell: wget -O - http://download.redis.io/releases/redis-stable.tar.gz | tar -xz -C /tmp
   args:
-    creates: '/tmp/redis-stable'
+    creates: /tmp/redis-stable
   sudo: no
 
 - name: Install
@@ -12,21 +12,29 @@
   sudo: yes
 
 - name: Make base dir
-  file: path=/var/redis state=directory
+  file: path=/var/redis
+        state=directory
   sudo: yes
 
 - name: Make config dir
-  file: path=/etc/redis state=directory
+  file: path=/etc/redis
+        state=directory
   sudo: yes
 
 - name: Copy config
-  copy: src=redis.conf dest=/etc/redis/redis.conf
+  copy: src=redis.conf
+        dest=/etc/redis/redis.conf
   sudo: yes
 
 - name: Add service
-  copy: src=init_script dest=/etc/init.d/redis mode=755
+  copy: src=init_script
+        dest=/etc/init.d/redis
+        mode=755
   sudo: yes
 
 - name: Start
-  service: name=redis enabled=yes state=started pattern=redis
+  service: name=redis
+           enabled=yes
+           state=started
+           pattern=redis
   sudo: yes
