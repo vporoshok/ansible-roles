@@ -1,0 +1,35 @@
+- name: default packages
+  apt: pkg={{ item }}
+  sudo: yes
+  with_items:
+    - mc
+    - zsh
+    - vim
+    - sudo
+    - wget
+    - tmux
+    - htop
+    - iftop
+
+- name: user
+  user: name={{ user }} shell='/bin/zsh' groups='sudo'
+  sudo: yes
+
+- name: ssh key
+  authorized_key: user={{ user }} key='ssh-rsa id_rsa.pub'
+  sudo: no
+
+- name: oh-my-zsh
+  git: repo='git://github.com/robbyrussell/oh-my-zsh.git'
+       dest='/home/{{ user }}/.oh-my-zsh'
+       accept_hostkey='yes'
+  sudo: no
+
+- name: default rc
+  copy: src='vimrc' dest='/home/{{ user }}/.vimrc' owner={{ user }}
+  sudo: no
+
+- name: zshrc
+  template: src='zshrc' dest='/home/{{ user }}/.zshrc'
+  sudo: no
+

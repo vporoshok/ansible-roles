@@ -1,0 +1,8 @@
+packages:
+  - mc
+  - vim
+  - zsh
+  - htop
+  - iftop
+  - wget
+  - sudo
