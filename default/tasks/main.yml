@@ -48,6 +48,6 @@
   sudo: no
 
 - name: Setup zshrc
-  template: src=zshrc
+  template: src=zshrc.j2
             dest=/home/{{ user }}/.zshrc
   sudo: no
