@@ -3,8 +3,9 @@
   sudo: yes
   with_items:
     - mc
-    - zsh
+    - git
     - vim
+    - zsh
     - sudo
     - wget
     - tmux
@@ -32,22 +33,32 @@
 
 - name: Copy ssh key
   authorized_key: user={{ user }}
-                  key='ssh-rsa id_rsa.pub'
-  sudo: no
+                  key="{{ lookup('file', '/Users/vp/.ssh/id_rsa.pub') }}"
+  sudo: yes
 
 - name: Clone oh-my-zsh
   git: repo=git://github.com/robbyrussell/oh-my-zsh.git
        dest=/home/{{ user }}/.oh-my-zsh
        accept_hostkey=yes
-  sudo: no
+  sudo: yes
+
+- name: Chown oh-my-zsh
+  file: path=/home/{{ user }}/.oh-my-zsh
+        owner={{ user }}
+        group={{ user }}
+        recurse=yes
+  sudo: yes
 
 - name: Copy default rc
   copy: src=vimrc
         dest=/home/{{ user }}/.vimrc
         owner={{ user }}
-  sudo: no
+        group={{ user }}
+  sudo: yes
 
 - name: Setup zshrc
   template: src=zshrc.j2
             dest=/home/{{ user }}/.zshrc
-  sudo: no
+            owner={{ user }}
+            group={{ user }}
+  sudo: yes

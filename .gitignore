@@ -1,0 +1,4 @@
+# project
+*.sublime-*
+.DS_Store
+ansible.yml
