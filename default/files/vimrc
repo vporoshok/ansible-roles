@@ -1,12 +1,1 @@
-syntax on
-set number
-set autoindent
-set smartindent
-set cindent
-set expandtab
-set shiftwidth=4
-set softtabstop=4
-set foldenable
-map <Leader>s :update<CR>
-map <Leader>t :tabedit<Space>
-
+/Users/vp/.vimrc

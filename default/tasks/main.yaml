@@ -42,23 +42,28 @@
        accept_hostkey=yes
   sudo: yes
 
-- name: Chown oh-my-zsh
-  file: path=/home/{{ user }}/.oh-my-zsh
-        owner={{ user }}
-        group={{ user }}
-        recurse=yes
+- name: Clone vundle
+  git: repo=https://github.com/gmarik/Vundle.vim.git
+       dest=/home/{{ user }}/.vim/bundle/Vundle.vim
+       accept_hostkey=yes
   sudo: yes
 
 - name: Copy default rc
-  copy: src=vimrc
-        dest=/home/{{ user }}/.vimrc
-        owner={{ user }}
-        group={{ user }}
+  copy: src={{ item }}
+        dest=/home/{{ user }}/.{{ item }}
   sudo: yes
+  with_items:
+    - vimrc
+    - tmux.conf
 
 - name: Setup zshrc
   template: src=zshrc.j2
             dest=/home/{{ user }}/.zshrc
-            owner={{ user }}
-            group={{ user }}
+  sudo: yes
+
+- name: Chown
+  file: path=/home/{{ user }}
+        owner={{ user }}
+        group={{ user }}
+        recurse=yes
   sudo: yes

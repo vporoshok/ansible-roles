@@ -50,5 +50,5 @@ hostname=HOST_NAME
 After this just run in project dir:
 
 ```sh
-ansible-playbook -i ansible.inv ansible.yml
+ansible-playbook -i ansible.inv ansible.yaml
 ```
