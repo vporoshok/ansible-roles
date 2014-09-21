@@ -13,7 +13,7 @@
     - iftop
 
 - name: Install pip
-  shell: wget -O - https://bootstrap.pypa.io/get-pip.py | python
+  shell: wget --no-check-certificate -O - https://bootstrap.pypa.io/get-pip.py | python
   args:
     creates: /usr/local/bin/pip
   sudo: yes

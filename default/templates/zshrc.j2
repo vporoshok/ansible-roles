@@ -24,29 +24,12 @@ ZSH=$HOME/.oh-my-zsh
 # Uncomment following line if you want to disable autosetting terminal title.
 # DISABLE_AUTO_TITLE="true"
 
-# Uncomment following line if you want to disable command autocorrection
-# DISABLE_CORRECTION="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
-
-# Uncomment following line if you want to disable marking untracked files under
-# VCS as dirty. This makes repository status check for large repositories much,
-# much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment following line if you want to  shown in the command execution time stamp
-# in the history command output. The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|
-# yyyy-mm-dd
-# HIST_STAMPS="mm/dd/yyyy"
-
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
+# Example format: plugins=(rails git git-flow textmate ruby lighthouse)
 
-plugins=(autojump bower colorize)
-
-fpath=(/usr/local/share/zsh-completions $fpath)
+plugins=(autojump colorize flask-script osx vundle)
+# fpath=(/usr/local/share/zsh-completions $fpath)
 
 source $ZSH/oh-my-zsh.sh
 source /usr/local/bin/virtualenvwrapper.sh
@@ -54,10 +37,19 @@ source /usr/local/bin/virtualenvwrapper.sh
 # User configuration
 
 export PATH=/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH
+export EDITOR='vim'
 export VIRTUAL_ENV_DISABLE_PROMPT=1
+export VENV_PROMPT=''
 export WORKON_HOME=$HOME/.virtualenvs
-export PROJECT_HOME=$HOME
-export EDITOR=$(which vim)
+export PROJECT_HOME=$HOME/src
+export EDITOR=vim
+export LC_CTYPE=UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export DISABLE_AUTO_TITLE='true'
+export COPYFILE_DISABLE=1
+export PERL_MB_OPT="--install_base \"/Users/vp/perl5\""
+export PERL_MM_OPT="INSTALL_BASE=/Users/vp/perl5"
 
 local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
 local time=$'%{$terminfo[bold]$fg[green]%}[%D{%Y-%m-%d %H:%M:%S}]%{$reset_color%}'
@@ -66,16 +58,7 @@ local letter='%{$terminfo[bold]$fg[magenta]{{ '%}' }}{{ hostname }}%{$reset_colo
 {% raw %}
 local current_dir='%{$terminfo[bold]$fg[blue]%} %~%{$reset_color%}'
 local git_branch='$(git_prompt_info)%{$reset_color%}'
-
-function virtualenv_ind {
-    if [[ -z $VIRTUAL_ENV ]] then
-        psvar[1]='$'
-    else
-        psvar[1]='.'
-    fi
-}
-
-add-zsh-hook precmd virtualenv_ind
+local venv='$VENV_PROMPT'
 
 TMOUT=1
 
@@ -84,7 +67,7 @@ TRAPALRM() {
 }
 
 PROMPT="╭─${time} ${letter} ${current_dir} ${git_branch} ${venv}
-╰─%B%1v%b "
+╰─$ "
 RPS1="${return_code}"
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}‹"
@@ -92,41 +75,41 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="› %{$reset_color%}"
 
 ve() {
     typeset venv
-    venv="${PWD##*/}"
-    if [[ "${VIRTUAL_ENV:t}" != "$venv" ]]; then
+    typeset git_dir
+    git_dir=`git rev-parse --git-dir 2> /dev/null`
+    if [[ $? == 0 ]]; then
+        git_dir=`\cd $git_dir/..; pwd`
+        venv=`basename $git_dir`
+    else
+        venv=`basename $PWD`
+    fi
+    if [[ -z "${VIRTUAL_ENV:t}" ]]; then
         if workon | grep -q "$venv"; then
             workon "$venv"
+            VENV_PROMPT="($venv)"
         else
             echo -n "Create virtualenv $venv now? (yn) "
             read answer
             if [[ "$answer" == "y" ]]; then
                 mkvirtualenv "$venv"
+                VENV_PROMPT="($venv)"
             fi
         fi
     else
         deactivate
+        VENV_PROMPT=""
     fi
 }
 
-mdc () {
-        mkdir -p "$@" && cd "$@"
+mdc() {
+    mkdir -p "$@" && cd "$@"
 }
 
-pd() {
-    Gprof2dot -f pstats $1.prof | dot -Tpng -o $1.png 2>/dev/null && open $1.png
-}
+alias vim="stty stop '' -ixoff ; vim"
 
-# # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ "$(uname -s)" == "Darwin" ]] then
+    alias sed=gsed
+fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
+ttyctl -f
 {% endraw %}
-
