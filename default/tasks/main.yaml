@@ -1,4 +1,4 @@
-- name: Install packages
+- name: Install packages apt
   apt: pkg={{ item }}
   sudo: yes
   with_items:
@@ -11,6 +11,22 @@
     - tmux
     - htop
     - iftop
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install packages yum
+  yum: pkg={{ item }}
+  sudo: yes
+  with_items:
+    - mc
+    - git
+    - vim
+    - zsh
+    - sudo
+    - wget
+    - tmux
+    - htop
+    - iftop
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install pip
   shell: wget --no-check-certificate -O - https://bootstrap.pypa.io/get-pip.py | python
@@ -28,7 +44,7 @@
 - name: Create user
   user: name={{ user }}
         shell=/bin/zsh
-        groups=sudo
+        groups=wheel
   sudo: yes
 
 - name: Copy ssh key

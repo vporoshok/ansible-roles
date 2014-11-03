@@ -1,5 +1,5 @@
 # Usage:
-# ansible-playbook -ku <user> -i <host>, ansible.yml -e 'hostname=<hostname>'
+# ansible-playbook -ku <user> -i <host>, ansible.yaml -e 'hostname=<hostname>'
 #
 - hosts: all
   vars:
