@@ -1,0 +1,21 @@
+- name: Clone
+  git: repo={{ repo }}
+       dest=/srv/{{ service }}
+       accept_hostkey=yes
+  sudo: no
+
+- name: Install supervisord
+  pip: name=supervisor
+       virtualenv=/srv/.virtualenvs/{{ service }}
+  sudo: no
+
+- name: Install requirements
+  pip: requirements=/srv/{{ service }}/requirements.txt
+       virtualenv=/srv/.virtualenvs/{{ service }}
+  sudo: no
+
+- name: Add service
+  template: src=service.j2
+            dest=/etc/init.d/{{ service }}
+            mode=755
+  sudo: yes

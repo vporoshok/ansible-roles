@@ -1,0 +1,11 @@
+- name: Move composer
+  shell: 'mv /tmp/composer.phar /usr/local/bin/composer'
+  sudo: 'yes'
+
+- name: Chown home
+  file:
+    path: '/home/{{ user }}'
+    owner: '{{ user }}'
+    group: '{{ user }}'
+    recurse: 'yes'
+  sudo: 'yes'

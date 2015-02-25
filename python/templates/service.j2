@@ -28,16 +28,16 @@
 
 . /lib/lsb/init-functions
 {% endraw %}
-PATH=/home/{{ user }}/.virtualenvs/{{ service }}/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/home/{{ user }}/.virtualenvs/{{ service }}/bin/supervisord
-SUPERVISORCTL=/home/{{ user }}/.virtualenvs/{{ service }}/bin/supervisorctl
+PATH=/srv/{{ service }}/venv/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/srv/{{ service }}/venv/bin/supervisord
+SUPERVISORCTL=/srv/{{ service }}/venv/bin/supervisorctl
 NAME={{ service }}
 DESC=supervisor
 
 test -x $DAEMON || exit 0
 
-LOGDIR=/home/{{ user }}/var/log/supervisor
-PIDFILE=/home/{{ user }}/var/run/supervisord.pid
+LOGDIR=/var/log/supervisor
+PIDFILE=/var/run/supervisord.pid
 DODTIME=5                   # Time to wait for the server to die, in seconds
                             # If this value is set too low you might not
                             # let some servers to die gracefully and
@@ -47,7 +47,7 @@ DODTIME=5                   # Time to wait for the server to die, in seconds
 if [ -f /etc/default/supervisor ] ; then
 	. /etc/default/supervisor
 fi
-DAEMON_OPTS="-c /home/{{ user }}/{{ service }}/supervisord.conf"
+DAEMON_OPTS="-c /srv/{{ service }}/supervisord.conf"
 {% raw %}
 set -e
 

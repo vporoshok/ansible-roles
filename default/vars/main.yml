@@ -1,0 +1,22 @@
+user: vp
+packages:
+    - mc
+    - git
+    - vim
+    - zsh
+    - curl
+    - sudo
+    - wget
+    - tmux
+    - htop
+    - iftop
+
+py_modules:
+    - pip
+    - virtualenv
+    - virtualenvwrapper
+
+rc_files:
+    - 'tmux.conf'
+    - 'vimrc'
+    - 'zshrc'

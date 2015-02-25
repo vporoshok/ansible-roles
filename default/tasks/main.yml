@@ -1,0 +1,69 @@
+- name: Install packages apt
+  when: ansible_os_family == 'Debian'
+  apt:
+    pkg: '{{ item }}'
+  with_items: packages
+  sudo: 'yes'
+
+- name: Install packages yum
+  when: ansible_os_family == 'RedHat'
+  yum:
+    pkg: '{{ item }}'
+  with_items: packages
+  sudo: 'yes'
+
+- name: Install pip
+  shell: 'curl -sS https://bootstrap.pypa.io/get-pip.py | python'
+  args:
+    creates: '/usr/local/bin/pip'
+  sudo: 'yes'
+
+- name: Install python modules
+  pip:
+    name: '{{ item }}'
+  with_items: py_modules
+  sudo: 'yes'
+
+- name: Install composer
+  shell: 'curl -sS https://getcomposer.org/installer | php'
+  args:
+    chdir: '/tmp/'
+    creates: '/usr/local/bin/composer'
+  notify: Move composer
+
+- name: Create user
+  user:
+    name: '{{ user }}'
+    shell: '/bin/zsh'
+    groups: 'sudo'
+  sudo: 'yes'
+
+- name: Copy ssh key
+  authorized_key:
+    user: '{{ user }}'
+    key: '{{ lookup("file", "/Users/vp/.ssh/id_rsa.pub") }}'
+  sudo: 'yes'
+
+- name: Clone oh-my-zsh
+  git:
+    repo: 'git://github.com/robbyrussell/oh-my-zsh.git'
+    dest: '/home/{{ user }}/.oh-my-zsh'
+    accept_hostkey: 'yes'
+  notify: Chown home
+  sudo: 'yes'
+
+- name: Clone vundle
+  git:
+    repo: 'https://github.com/gmarik/Vundle.vim.git'
+    dest: '/home/{{ user }}/.vim/bundle/Vundle.vim'
+    accept_hostkey: 'yes'
+  notify: Chown home
+  sudo: 'yes'
+
+- name: Copy default rc
+  copy:
+    src: '{{ item }}'
+    dest: '/home/{{ user }}/.{{ item }}'
+  with_items: rc_files
+  notify: Chown home
+  sudo: 'yes'
