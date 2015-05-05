@@ -94,7 +94,10 @@ def main(host, user, password):
         command.append('-k')
 
     command.append('ansible.yml')
-    pbcopy(' '.join(command))
+    res = ' '.join(command)
+    pbcopy(res)
+    echo('The follow command has been copied to clipboard:')
+    echo(res)
 
 
 if __name__ == '__main__':
