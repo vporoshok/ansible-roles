@@ -1,0 +1,50 @@
+packages:
+  - php-console-table
+  - php-pear
+  - php5
+  - php5-gd
+  - php5-cli
+  - php5-dev
+  - php5-curl
+  - php5-intl
+  - php5-json
+  - php5-mysql
+  - php5-mcrypt
+  - php5-common
+  - apache2
+  - libapache2-mod-php5
+  - nginx
+  - mysql-server
+  - mysql-client
+  - python-mysqldb
+
+services:
+  - apache2
+  - nginx
+  - mysql
+
+a2modules:
+  - php5
+  - rewrite
+
+configs:
+  - {
+      src: 'ng-site.j2',
+      dst: '/etc/nginx/sites-enabled/{{ project }}'
+    }
+  - {
+      src: 'a2-site.j2',
+      dst: '/etc/apache2/sites-available/{{ project }}.conf'
+    }
+  - {
+      src: 'a2-apache2.conf.j2',
+      dst: '/etc/apache2/apache2.conf'
+    }
+  - {
+      src: 'a2-php.ini.j2',
+      dst: '/etc/php5/apache2/php.ini'
+    }
+  - {
+      src: 'a2-php.ini.j2',
+      dst: '/etc/php5/cli/php.ini'
+    }

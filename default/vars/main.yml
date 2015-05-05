@@ -17,6 +17,15 @@ py_modules:
     - virtualenvwrapper
 
 rc_files:
-    - 'tmux.conf'
-    - 'vimrc'
-    - 'zshrc'
+    - {
+        src: 'rc-.tmux.conf.j2',
+        dst: '/home/{{ user }}/.tmux.conf'
+      }
+    - {
+        src: 'rc-.vimrc.j2',
+        dst: '/home/{{ user }}/.vimrc'
+      }
+    - {
+        src: 'rc-.zshrc.j2',
+        dst: '/home/{{ user }}/.zshrc'
+      }

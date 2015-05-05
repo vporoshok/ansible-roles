@@ -1,0 +1,14 @@
+<VirtualHost 127.0.0.1:88>
+    ServerAdmin webmaster@localhost
+
+    DocumentRoot /var/www/{{ project }}
+
+    # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+    # error, crit, alert, emerg.
+    # It is also possible to configure the loglevel for particular
+    # modules, e.g.
+    #LogLevel info ssl:warn
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ project }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ project }}-access.log combined
+</VirtualHost>

@@ -1,3 +1,9 @@
+- name: Update apt cache
+  when: ansible_os_family == 'Debian'
+  apt:
+    update_cache: 'yes'
+  sudo: 'yes'
+
 - name: Install packages apt
   when: ansible_os_family == 'Debian'
   apt:
@@ -12,24 +18,17 @@
   with_items: packages
   sudo: 'yes'
 
-- name: Install pip
-  shell: 'curl -sS https://bootstrap.pypa.io/get-pip.py | python'
-  args:
-    creates: '/usr/local/bin/pip'
-  sudo: 'yes'
+# - name: Install pip
+#   shell: 'curl -sS https://bootstrap.pypa.io/get-pip.py | python'
+#   args:
+#     creates: '/usr/local/bin/pip'
+#   sudo: 'yes'
 
-- name: Install python modules
-  pip:
-    name: '{{ item }}'
-  with_items: py_modules
-  sudo: 'yes'
-
-- name: Install composer
-  shell: 'curl -sS https://getcomposer.org/installer | php'
-  args:
-    chdir: '/tmp/'
-    creates: '/usr/local/bin/composer'
-  notify: Move composer
+# - name: Install python modules
+#   pip:
+#     name: '{{ item }}'
+#   with_items: py_modules
+#   sudo: 'yes'
 
 - name: Create user
   user:
@@ -62,8 +61,8 @@
 
 - name: Copy default rc
   copy:
-    src: '{{ item }}'
-    dest: '/home/{{ user }}/.{{ item }}'
+    src: '{{ item.src }}'
+    dest: '{{ item.dst }}'
   with_items: rc_files
   notify: Chown home
   sudo: 'yes'

@@ -1,0 +1,112 @@
+- name: 'ensure PHP PPA is enabled'
+  apt_repository:
+    repo: 'ppa:ondrej/php5'
+  sudo: 'yes'
+
+- name: 'update apt cache'
+  apt:
+    update_cache: 'yes'
+  sudo: 'yes'
+
+- name: 'packages install'
+  apt:
+    pkg: '{{ item }}'
+    state: 'latest'
+  with_items: packages
+  notify: 'apache restart'
+  sudo: 'yes'
+
+- name: 'mcrypt enable'
+  command: 'php5enmod mcrypt'
+  sudo: 'yes'
+
+- name: 'configure apache ports'
+  lineinfile:
+    dest: '/etc/apache2/ports.conf'
+    regexp: '^Listen '
+    line: 'Listen 88'
+    state: 'present'
+  notify: 'apache restart'
+  sudo: 'yes'
+
+- name: 'disable apache 000-default'
+  command: 'a2dissite 000-default'
+  notify: 'apache reload'
+  sudo: 'yes'
+
+- name: 'disable nginx default'
+  command: 'unlink /etc/nginx/sites-enabled/default'
+  args:
+    removes: '/etc/nginx/sites-enabled/default'
+  notify: 'nginx restart'
+  sudo: 'yes'
+
+- name: 'apache2 modules'
+  apache2_module:
+    name: '{{ item }}'
+    state: 'present'
+  with_items: 'a2modules'
+  notify: 'apache restart'
+  sudo: 'yes'
+
+- name: 'make dir'
+  file:
+    path: '/var/www/{{ project }}'
+    state: 'directory'
+  sudo: 'yes'
+  sudo_user: 'www-data'
+
+# - name: 'install composer'
+#   command: 'curl -sS https://getcomposer.org/installer | php'
+#   args:
+#     chdir: '/tmp/'
+#     creates: '/usr/local/bin/composer'
+#   register: 'composer'
+
+# - name: 'move composer'
+#   when: 'composer|changed'
+#   command: 'mv /tmp/composer.phar /usr/local/bin/composer'
+#   sudo: 'yes'
+
+# - name: 'install php modules'
+#   composer:
+#     command: 'install'
+#     working_dir: '/srv/repos/{{ project }}/local/php_interface'
+#   sudo: 'yes'
+#   sudo_user: 'www-data'
+
+- name: 'configure'
+  register: 'configure'
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dst }}'
+  with_items: 'configs'
+  notify: 'nginx reload'
+  sudo: 'yes'
+
+- name: 'enable apache site'
+  command: 'a2ensite {{ project }}'
+  notify: 'apache reload'
+  sudo: 'yes'
+
+- name: 'services launch'
+  service:
+    name: '{{ item }}'
+    enabled: 'yes'
+    state: 'started'
+  with_items: 'services'
+  sudo: 'yes'
+
+- name: 'database present'
+  mysql_db:
+    name: '{{ project }}'
+    encoding: 'utf8'
+    collation: 'utf8_unicode_ci'
+    state: 'present'
+
+- name: 'database user'
+  mysql_user:
+    name: '{{ project }}'
+    password: '{{ db_pass }}'
+    priv: '{{ project }}.*:ALL'
+    state: 'present'
