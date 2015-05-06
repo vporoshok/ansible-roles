@@ -1,7 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-from __future__ import print_function
 
 from clipboard import copy as pbcopy
 from click import command, argument, option, echo
@@ -48,9 +46,7 @@ def gen_pass(length=10, digits=2):
     from random import seed, choice, sample
 
     seed(time())
-    lowercase = string.lowercase.translate(None, 'lo')
-    uppercase = string.uppercase.translate(None, 'IO')
-    letters = lowercase + uppercase
+    letters = string.ascii_letters.translate({ord(i): None for i in 'loIO'})
     password = list(
         chain(
             (choice(string.digits) for _ in range(digits)),
