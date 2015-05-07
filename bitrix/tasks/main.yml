@@ -24,7 +24,7 @@
   lineinfile:
     dest: '/etc/apache2/ports.conf'
     regexp: '^Listen '
-    line: 'Listen 88'
+    line: 'Listen 127.0.0.1:88'
     state: 'present'
   notify: 'apache restart'
   sudo: 'yes'
