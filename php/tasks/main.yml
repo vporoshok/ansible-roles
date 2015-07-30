@@ -1,0 +1,43 @@
+- name: 'ensure PHP PPA is enabled'
+  apt_repository:
+    repo: 'ppa:ondrej/php5'
+  sudo: 'yes'
+
+- name: 'update apt cache'
+  apt:
+    update_cache: 'yes'
+  sudo: 'yes'
+
+- name: 'packages install'
+  apt:
+    pkg: '{{ item }}'
+    state: 'latest'
+  with_items: packages
+  sudo: 'yes'
+
+- name: 'disable nginx default'
+  command: 'unlink /etc/nginx/sites-enabled/default'
+  args:
+    removes: '/etc/nginx/sites-enabled/default'
+  notify: 'nginx restart'
+  sudo: 'yes'
+
+- name: 'install composer'
+  command: 'curl -sS https://getcomposer.org/installer | php'
+  args:
+    chdir: '/tmp/'
+    creates: '/usr/local/bin/composer'
+  register: 'composer'
+
+- name: 'move composer'
+  when: 'composer|changed'
+  command: 'mv /tmp/composer.phar /usr/local/bin/composer'
+  sudo: 'yes'
+
+- name: 'services launch'
+  service:
+    name: '{{ item }}'
+    enabled: 'yes'
+    state: 'started'
+  with_items: 'services'
+  sudo: 'yes'

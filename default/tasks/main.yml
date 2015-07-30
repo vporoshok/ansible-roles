@@ -18,29 +18,12 @@
   with_items: packages
   sudo: 'yes'
 
-# - name: Install pip
-#   shell: 'curl -sS https://bootstrap.pypa.io/get-pip.py | python'
-#   args:
-#     creates: '/usr/local/bin/pip'
-#   sudo: 'yes'
-
-# - name: Install python modules
-#   pip:
-#     name: '{{ item }}'
-#   with_items: py_modules
-#   sudo: 'yes'
-
 - name: Create user
   user:
     name: '{{ user }}'
     shell: '/bin/zsh'
-    groups: 'sudo'
-  sudo: 'yes'
-
-- name: Copy ssh key
-  authorized_key:
-    user: '{{ user }}'
-    key: '{{ lookup("file", "/Users/vp/.ssh/id_rsa.pub") }}'
+    group: 'www-data'
+    groups: '{{ user }},sudo,www-data'
   sudo: 'yes'
 
 - name: Clone oh-my-zsh

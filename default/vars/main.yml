@@ -18,14 +18,22 @@ py_modules:
 
 rc_files:
     - {
-        src: 'rc-.tmux.conf.j2',
+        src: 'rc-.tmux.conf',
         dst: '/home/{{ user }}/.tmux.conf'
       }
     - {
-        src: 'rc-.vimrc.j2',
+        src: 'rc-.vimrc',
         dst: '/home/{{ user }}/.vimrc'
       }
     - {
-        src: 'rc-.zshrc.j2',
+        src: 'rc-.zshrc',
         dst: '/home/{{ user }}/.zshrc'
+      }
+    - {
+        src: 'rc-.profile',
+        dst: '/home/{{ user }}/.profile'
+      }
+    - {
+        src: 'rc-.zprofile',
+        dst: '/home/{{ user }}/.zprofile'
       }

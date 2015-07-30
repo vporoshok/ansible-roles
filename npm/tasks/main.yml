@@ -1,0 +1,31 @@
+- name: 'packages install'
+  apt:
+    pkg: '{{ item }}'
+    state: 'latest'
+  with_items: packages
+  sudo: 'yes'
+
+- name: 'nodejs -> node'
+  command: 'ln -s /usr/bin/nodejs /usr/bin/node'
+  args:
+    creates: '/usr/bin/node'
+  sudo: 'yes'
+
+- name: 'npm-modules mkdir'
+  file:
+    path: '{{ npm_modules }}'
+    state: 'directory'
+    owner: 'www-data'
+    group: 'www-data'
+    mode: 775
+  register: npm_wo_sudo
+  sudo: 'yes'
+
+- name: 'npm-module update prefix'
+  when: 'npm_wo_sudo|changed'
+  command: 'npm config set prefix "{{ npm_modules }}"'
+
+- name: 'npm-module profile update'
+  lineinfile:
+    dest: '/home/{{ user }}/.profile'
+    line: 'export PATH={{ npm_modules }}/bin:$PATH'

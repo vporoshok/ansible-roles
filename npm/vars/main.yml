@@ -1,0 +1,5 @@
+packages:
+  - nodejs
+  - npm
+
+npm_modules: '/usr/local/npm-modules'
