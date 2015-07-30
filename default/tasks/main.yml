@@ -45,7 +45,7 @@
 - name: Copy default rc
   copy:
     src: '{{ item.src }}'
-    dest: '{{ item.dst }}'
+    dest: '/home/{{ user }}/{{ item.dst }}'
   with_items: rc_files
   notify: Chown home
   sudo: 'yes'
